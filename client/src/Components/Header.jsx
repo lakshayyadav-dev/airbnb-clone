@@ -21,7 +21,7 @@ const Header = () => {
                 </svg>
             </a>
 
-            <div className="flex w-[30%] justify-between gap-5 border border-gray-300 rounded-full py-4 px-5 shadow-md shadow-gray-300">
+            <div className="flex justify-between gap-5 border border-gray-300 rounded-full py-4 px-5 shadow-md shadow-gray-300">
                 <div>Anywhere</div>
                 <div className="border-l border-gray-300"/>
                 <div>Any week</div>
