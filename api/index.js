@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 import User from "./models/User.js";
 
@@ -13,6 +14,7 @@ const app = express();
 const salt = bcrypt.genSaltSync(10);
 const jwtSecret = "fjdaskl;fjdklasj01293ukjfdaskfjdas";
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
     credentials: true,
@@ -52,15 +54,35 @@ app.post("/login", async (req, res) => {
         const isPasswordCorrect = bcrypt.compareSync(password, userDocument.password);
 
         if (isPasswordCorrect) {
-            jwt.sign({ id: userDocument._id, email:userDocument.email }, jwtSecret, {}, (err, token) => {
-                if (err) throw err;
-                res.cookie("token", token).json("Login Successfull");
-            })
+            jwt.sign({
+                    id: userDocument._id,
+                    email: userDocument.email,
+                },
+                jwtSecret,
+                {},
+                (err, token) => {
+                    if (err) throw err;
+                    res.cookie("token", token).json(userDocument);
+                });
         } else {
             res.status(401).send({ message: "Incorrect Password!" });
         }
     } else {
         res.status(500).json("User not found!");
+    }
+});
+
+app.get("/profile", (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+            if (err) throw err;
+
+            const { name, email, _id } = await User.findById(userData.id);
+            res.json({ name, email, _id });
+        });
+    } else {
+        res.json(null);
     }
 });
 

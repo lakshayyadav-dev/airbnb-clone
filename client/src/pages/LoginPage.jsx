@@ -1,27 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../UserContext.jsx";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
+    const { setUser } = useContext(UserContext);
 
     const loginUser = async e => {
         e.preventDefault();
 
         try {
-            await axios.post("/login", { email, password }, {withCredentials: true})
-                .then(() => setRedirect(true))
-                .catch(err => alert(err.response.data.message));
-
+            const userInfo = await axios.post("/login", { email, password }, { withCredentials: true });
+            setUser(userInfo.data);
+            setRedirect(true);
         } catch (err) {
-            alert("Login failed");
+            alert("Login Failed");
         }
     };
 
     if (redirect) {
-        return <Navigate to={"/"} />
+        return <Navigate to={"/"}/>;
     }
 
     return (
