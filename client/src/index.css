@@ -23,3 +23,23 @@ button[type="submit"] {
     width: 100%;
     @apply bg-primary;
 }
+
+.primary {
+    border: none;
+    border-radius: 30px;
+    padding: 10px;
+    /*background-color: #000;*/
+    color: #fff;
+    width: 100%;
+    @apply bg-primary;
+}
+
+.secondary {
+    border: none;
+    border-radius: 30px;
+    padding: 10px;
+    /*background-color: #000;*/
+    color: #fff;
+    width: 100%;
+    @apply bg-gray-500;
+}

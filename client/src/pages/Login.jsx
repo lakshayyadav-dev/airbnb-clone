@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserContext.jsx";
 
-const LoginPage = () => {
+const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
@@ -51,4 +51,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default Login;

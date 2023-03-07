@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const IndexPage = () => {
+const Index = () => {
     return (
         <div>
             index page
@@ -9,4 +9,4 @@ const IndexPage = () => {
     );
 };
 
-export default IndexPage;
+export default Index;
