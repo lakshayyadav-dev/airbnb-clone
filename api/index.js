@@ -5,8 +5,18 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import downloader from "image-downloader";
+import multer from "multer";
+import fs from "fs";
 
 import User from "./models/User.js";
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 dotenv.config();
 const app = express();
@@ -15,6 +25,7 @@ const salt = bcrypt.genSaltSync(10);
 const jwtSecret = "fjdaskl;fjdklasj01293ukjfdaskfjdas";
 
 app.use(cookieParser());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cors({
     credentials: true,
@@ -74,7 +85,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/logout", (req, res) => {
     res.clearCookie("token").json("Logged out!");
-})
+});
 
 app.get("/profile", (req, res) => {
     const { token } = req.cookies;
@@ -88,6 +99,35 @@ app.get("/profile", (req, res) => {
     } else {
         res.json(null);
     }
+});
+
+app.post("/upload-by-link", async (req, res) => {
+    const { link } = req.body;
+    const fileName = "photo_" + Date.now() + ".jpg";
+    const destination = __dirname + "/uploads/" + fileName;
+
+    await downloader.image({
+        url: link,
+        dest: destination
+    });
+
+    res.json({ fileName });
+});
+
+const photosMiddleware = multer({ dest: "uploads" });
+
+app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+        const { path, originalname, filename } = req.files[i];
+        const ext = originalname.split(".")[1];
+
+        const newPath = path + "." + ext;
+
+        fs.renameSync(path, newPath);
+        uploadedFiles.push(filename + "." + ext);
+    }
+    res.json(uploadedFiles);
 });
 
 app.listen(3001, () => {
